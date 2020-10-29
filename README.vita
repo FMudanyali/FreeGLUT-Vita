@@ -1,0 +1,11 @@
+# PS Vita CMake toolchain file, for use with DolceSDK
+# Requires DolceSDK
+#
+# Usage:
+# mkdir build
+# cd build
+# cmake .. -DVITA=1
+# make -j8
+# make install
+#
+# You need to use "glutInitContextVersion(2, 0)" in your program for OpenGL ES 2.0.
