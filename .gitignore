@@ -1,5 +1,6 @@
 Makefile.in
 Makefile
+.DS_Store
 INSTALL
 .deps
 aclocal.m4
