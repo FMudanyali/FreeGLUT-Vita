@@ -1,5 +1,5 @@
-# Freeglut for Vita
-Freeglut library ported to vita using [Pigs-In-A-Blanket](https://github.com/SonicMastr/Pigs-In-A-Blanket).
+# FreeGLUT for PS Vita
+FreeGLUT library ported to PS Vita using [Pigs-In-A-Blanket](https://github.com/SonicMastr/Pigs-In-A-Blanket).
 
 ## To compile for DolceSDK:
 First obtain [PIB.](https://github.com/SonicMastr/Pigs-In-A-Blanket)
@@ -15,8 +15,9 @@ make install
 The controls need work as I didn't try porting a glut game to see how the controls are used.
 
 ## Credits:
-- freeglut contributors
+- FreeGLUT contributors
 - FMudanyali
 - dots-tb
 - SonicMastr
+- GrapheneCt
 - Team CBPS
