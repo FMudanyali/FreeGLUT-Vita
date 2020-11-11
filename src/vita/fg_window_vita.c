@@ -33,7 +33,7 @@ void fgPlatformOpenWindow( SFG_Window* window, const char* title,
     fgWarning("You can't have more than one window on Vita");
     return;
   }
-  fgDisplay.pDisplay.single_native_window = window;
+  fgDisplay.pDisplay.single_native_window = (EGLNativeWindowType)window;
   window->Window.Handle = fgDisplay.pDisplay.single_native_window;
   window->State.WorkMask |= GLUT_INIT_WORK;
 
