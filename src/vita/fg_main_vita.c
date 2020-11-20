@@ -37,29 +37,29 @@ extern void fgPlatformIconifyWindow( SFG_Window *window );
 extern void fgPlatformShowWindow( SFG_Window *window );
 /* Function to read key press, needs work so it can
 detect multiple presses. */
-static unsigned char read_key() {
-  SceCtrlData ctrl;
-  sceCtrlPeekBufferPositive(0, &ctrl, 1);
-  switch(ctrl.buttons){
-    case SCE_CTRL_CROSS: return GLUT_KEY_F1;
-    case SCE_CTRL_SQUARE: return GLUT_KEY_F2;
-    case SCE_CTRL_CIRCLE: return GLUT_KEY_F3;
-    case SCE_CTRL_TRIANGLE: return GLUT_KEY_F4;
-    case SCE_CTRL_L1: return GLUT_KEY_F5;
-    case SCE_CTRL_R1: return GLUT_KEY_F6;
-    case SCE_CTRL_L2: return GLUT_KEY_F7;
-    case SCE_CTRL_R2: return GLUT_KEY_F8;
-    case SCE_CTRL_L3: return GLUT_KEY_F9;
-    case SCE_CTRL_R3: return GLUT_KEY_F10;
-    case SCE_CTRL_SELECT: return GLUT_KEY_F11;
-    case SCE_CTRL_START: return GLUT_KEY_F12;
-    case SCE_CTRL_UP: return GLUT_KEY_UP;
-    case SCE_CTRL_DOWN: return GLUT_KEY_DOWN;
-    case SCE_CTRL_LEFT: return GLUT_KEY_LEFT;
-    case SCE_CTRL_RIGHT: return GLUT_KEY_RIGHT;
-    default: return 0;
-  }
-}
+
+uint32_t btn_current;
+
+#define VITA_KEY_NUM 16
+uint32_t vita_btn_bind[VITA_KEY_NUM][2] = {
+    {SCE_CTRL_CROSS, GLUT_KEY_F1},
+    {SCE_CTRL_SQUARE, GLUT_KEY_F2},
+    {SCE_CTRL_CIRCLE, GLUT_KEY_F3},
+    {SCE_CTRL_TRIANGLE, GLUT_KEY_F4},
+    {SCE_CTRL_L1, GLUT_KEY_F5},
+    {SCE_CTRL_R1, GLUT_KEY_F6},
+    {SCE_CTRL_L2, GLUT_KEY_F7},
+    {SCE_CTRL_R2, GLUT_KEY_F8},
+    {SCE_CTRL_L3, GLUT_KEY_F9},
+    {SCE_CTRL_R3, GLUT_KEY_F10},
+    {SCE_CTRL_SELECT, GLUT_KEY_F11},
+    {SCE_CTRL_START, GLUT_KEY_F12},
+    {SCE_CTRL_UP, GLUT_KEY_UP},
+    {SCE_CTRL_DOWN, GLUT_KEY_DOWN},
+    {SCE_CTRL_LEFT, GLUT_KEY_LEFT},
+    {SCE_CTRL_RIGHT, GLUT_KEY_RIGHT}
+};
+
 /* This function is called every frame or something. */
 void fgPlatformProcessSingleEvent ( void )
 {
@@ -69,9 +69,23 @@ void fgPlatformProcessSingleEvent ( void )
     int32_t height = 544;
     fghOnReshapeNotify(window,width,height,GL_FALSE);
   }
-  unsigned char keypress = read_key();
-  if (keypress!=0)
-    INVOKE_WCB(*window, Special, (keypress, window->State.MouseX, window->State.MouseY));
+  SceCtrlData poll_ctrl;
+  sceCtrlPeekBufferPositive(0, &poll_ctrl, 1);
+  
+  uint32_t btn_release = btn_current & ~poll_ctrl.buttons;
+  //uint32_t btn_press   = ~btn_current & poll_ctrl.buttons;
+  uint32_t btn_press   = poll_ctrl.buttons;
+  
+  for(int i = 0; i < VITA_KEY_NUM; i++) {
+	if(btn_press & vita_btn_bind[i][0]) {
+		INVOKE_WCB(*window, Special, (vita_btn_bind[i][1], window->State.MouseX, window->State.MouseY));
+	}
+	if(btn_release & vita_btn_bind[i][0]) {
+		INVOKE_WCB(*window, SpecialUp, (vita_btn_bind[i][1], window->State.MouseX, window->State.MouseY));
+	}
+  }
+  
+  btn_current = poll_ctrl.buttons;
 }
 
 void fgPlatformMainLoopPreliminaryWork ( void )
